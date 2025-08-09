@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import axios from "../services/axiosInstance";
 import PersonIcon from "@mui/icons-material/Person";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Navbar from "../components/Navbar";
 
 export default function AdminRequests() {
   const [requests, setRequests] = useState([]);
@@ -132,22 +133,7 @@ export default function AdminRequests() {
       }}
     >
       {/* Navbar */}
-      <AppBar position="static" color="default" elevation={1}>
-        <Toolbar>
-          <Typography
-            variant="h6"
-            sx={{ flexGrow: 1, fontWeight: "bold", color: "#6a1b9a" }}
-          >
-            Admin - Tour Requests
-          </Typography>
-          <Button href="/admin-dashboard" color="inherit">
-            Dashboard
-          </Button>
-          <Button onClick={handleLogout} color="inherit">
-            Logout
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <Navbar title="Admin - Tour Requests" userType="admin" />
 
       <Container sx={{ py: 6 }}>
         <Typography variant="h4" fontWeight="bold" gutterBottom>

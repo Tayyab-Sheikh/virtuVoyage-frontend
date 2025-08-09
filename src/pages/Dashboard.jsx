@@ -21,6 +21,7 @@ import {
 import { useState } from "react";
 import { toast } from "react-toastify";
 import axios from "../services/axiosInstance";
+import Navbar from "../components/Navbar";
 
 const enrolledTours = [
   {
@@ -86,7 +87,7 @@ export default function Dashboard() {
 
   const handleSubmitRequest = async () => {
     try {
-      await axios.post("/tour-requests", tourRequest);
+      await axios.post("/custom-tour-requests", tourRequest);
       toast.success("Tour request submitted successfully!");
       setOpenRequestModal(false);
       setTourRequest({
@@ -113,25 +114,7 @@ export default function Dashboard() {
       }}
     >
       {/* Navbar */}
-      <AppBar position="static" color="default" elevation={1}>
-        <Toolbar>
-          <Typography
-            variant="h6"
-            sx={{ flexGrow: 1, fontWeight: "bold", color: "#6a1b9a" }}
-          >
-            Tourist Dashboard
-          </Typography>
-          <Button href="/tours" color="inherit">
-            Browse Tours
-          </Button>
-          <Button href="/my-requests" color="inherit">
-            My Requests
-          </Button>
-          <Button onClick={handleLogout} color="inherit">
-            Logout
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <Navbar title="Tourist Dashboard" userType="tourist" />
 
       <Container sx={{ py: 6 }}>
         {/* Request Tour Button */}

@@ -8,6 +8,8 @@ import GuideDashboard from "./pages/GuideDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MyRequests from "./pages/MyRequests";
+import GuideRequests from "./pages/GuideRequests";
+import Checkout from "./pages/Checkout";
 export default function App() {
   return (
     <Router>
@@ -47,6 +49,22 @@ export default function App() {
           element={
             <ProtectedRoute role="tourist">
               <MyRequests />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/guide-requests"
+          element={
+            <ProtectedRoute role="guide">
+              <GuideRequests />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute role="tourist">
+              <Checkout />
             </ProtectedRoute>
           }
         />

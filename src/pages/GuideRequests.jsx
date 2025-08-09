@@ -21,6 +21,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "../services/axiosInstance";
 import PersonIcon from "@mui/icons-material/Person";
+import Navbar from "../components/Navbar";
 
 export default function GuideRequests() {
   const [requests, setRequests] = useState([]);
@@ -35,8 +36,8 @@ export default function GuideRequests() {
 
   const fetchRequests = async () => {
     try {
-      const response = await axios.get("/tour-requests/available");
-      setRequests(response.data || []);
+      const response = await axios.get("/custom-tour-requests");
+      setRequests(response.data.data || []);
     } catch (err) {
       toast.error("Failed to load tour requests");
       console.error(err);
@@ -58,7 +59,7 @@ export default function GuideRequests() {
 
   const handleAcceptRequest = async () => {
     try {
-      await axios.put(`/tour-requests/${selectedRequest._id}/accept`, {
+      await axios.post(`/custom-tour-requests/${selectedRequest._id}/accept`, {
         guideResponse: response,
       });
       toast.success("Tour request accepted successfully!");
@@ -117,25 +118,7 @@ export default function GuideRequests() {
       }}
     >
       {/* Navbar */}
-      <AppBar position="static" color="default" elevation={1}>
-        <Toolbar>
-          <Typography
-            variant="h6"
-            sx={{ flexGrow: 1, fontWeight: "bold", color: "#6a1b9a" }}
-          >
-            Tour Requests
-          </Typography>
-          <Button href="/guide-dashboard" color="inherit">
-            Dashboard
-          </Button>
-          <Button href="/tours" color="inherit">
-            Browse Tours
-          </Button>
-          <Button onClick={handleLogout} color="inherit">
-            Logout
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <Navbar title="Tour Requests" userType="guide" />
 
       <Container sx={{ py: 6 }}>
         <Typography variant="h4" fontWeight="bold" gutterBottom>

@@ -18,6 +18,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "../services/axiosInstance"; // or wherever your axios is set up
 import { toast } from "react-toastify";
+import Navbar from "../components/Navbar";
 
 export default function AdminDashboard() {
   const [analytics, setAnalytics] = useState({});
@@ -90,22 +91,7 @@ export default function AdminDashboard() {
       }}
     >
       {/* Navbar */}
-      <AppBar position="static" color="default" elevation={1}>
-        <Toolbar>
-          <Typography
-            variant="h6"
-            sx={{ flexGrow: 1, fontWeight: "bold", color: "#6a1b9a" }}
-          >
-            Admin Dashboard
-          </Typography>
-          <Button href="/admin-requests" color="inherit">
-            Tour Requests
-          </Button>
-          <Button onClick={handleLogout} color="inherit">
-            Logout
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <Navbar title="Admin Dashboard" userType="admin" />
 
       <Container sx={{ py: 6 }}>
         {/* Platform Analytics */}
@@ -122,11 +108,11 @@ export default function AdminDashboard() {
             { label: "Cancelled Tours", value: analytics?.cancelledTours ?? 0 },
             {
               label: "Total Revenue",
-              value: `$${analytics?.totalRevenue ?? 0}`,
+              value: `${payments?.totalRevenue ?? 0}`,
             },
             {
               label: "Platform Commission",
-              value: `$${totalCommission.toFixed(2)}`,
+              value: `${totalCommission.toFixed(2)}`,
             },
           ].map((item, i) => (
             <Grid item xs={6} md={3} key={i}>

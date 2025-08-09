@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import axios from "../services/axiosInstance";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Navbar from "../components/Navbar";
 
 export default function MyRequests() {
   const [requests, setRequests] = useState([]);
@@ -45,8 +46,8 @@ export default function MyRequests() {
 
   const fetchRequests = async () => {
     try {
-      const response = await axios.get("/tour-requests/my-requests");
-      setRequests(response.data || []);
+      const response = await axios.get("/custom-tour-requests/my-requests");
+      setRequests(response.data.data || []);
     } catch (err) {
       toast.error("Failed to load tour requests");
       console.error(err);
@@ -135,25 +136,7 @@ export default function MyRequests() {
       }}
     >
       {/* Navbar */}
-      <AppBar position="static" color="default" elevation={1}>
-        <Toolbar>
-          <Typography
-            variant="h6"
-            sx={{ flexGrow: 1, fontWeight: "bold", color: "#6a1b9a" }}
-          >
-            My Tour Requests
-          </Typography>
-          <Button href="/dashboard" color="inherit">
-            Dashboard
-          </Button>
-          <Button href="/tours" color="inherit">
-            Browse Tours
-          </Button>
-          <Button onClick={handleLogout} color="inherit">
-            Logout
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <Navbar title="My Tour Requests" userType="tourist" />
 
       <Container sx={{ py: 6 }}>
         <Typography variant="h4" fontWeight="bold" gutterBottom>
