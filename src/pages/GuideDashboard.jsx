@@ -44,7 +44,6 @@ export default function GuideDashboard() {
     description: "",
     price: "",
     startDate: "",
-    endDate: "",
     maxTourists: "",
     status: "pending", // Add status field with default value
     images: [], // Array of base64 strings
@@ -57,9 +56,37 @@ export default function GuideDashboard() {
           axios.get("/tours/my-tours"),
           axios.get("/tours/payments"),
         ]);
-        console.log({ toursRes, paymentsRes });
-        setMyTours(toursRes.data || []);
-        setPayments(paymentsRes.data || []);
+
+        const tours = toursRes.data || [];
+        const payments = paymentsRes.data || [];
+
+        setMyTours(tours);
+        setPayments(payments);
+
+        // Calculate analytics
+        const completedTours = tours.filter(
+          (tour) => tour.status === "completed"
+        );
+        const pendingTours = tours.filter((tour) => tour.status === "pending");
+        const cancelledTours = tours.filter(
+          (tour) => tour.status === "cancelled"
+        );
+
+        const totalTourists = Array.isArray(payments)
+          ? payments.reduce((sum, p) => sum + (p.amount || 0), 0)
+          : 0;
+        const totalRevenue = Array.isArray(payments)
+          ? payments.reduce((sum, p) => sum + (p.amount || 0), 0)
+          : 0;
+
+        setAnalytics({
+          totalTours: tours.length,
+          pendingTours: pendingTours.length,
+          completedTours: completedTours.length,
+          cancelledTours: cancelledTours.length,
+          totalTourists: totalTourists || 0,
+          totalRevenue: totalRevenue || 0,
+        });
       } catch (err) {
         toast.error("Failed to load guide data");
         console.error(err);
@@ -71,24 +98,6 @@ export default function GuideDashboard() {
     fetchData();
   }, []);
 
-  const completedTours = myTours.filter((tour) => tour.status === "Completed");
-  const pendingTours = myTours.filter((tour) => tour.status === "Pending");
-  const cancelledTours = myTours.filter((tour) => tour.status === "Cancelled");
-
-  const totalTourists = Array.isArray(payments)
-    ? payments.reduce((sum, p) => sum + (p.amount || 0), 0)
-    : 0;
-  const totalRevenue = Array.isArray(payments)
-    ? payments.reduce((sum, p) => sum + (p.amount || 0), 0)
-    : 0;
-  console.log(
-    totalRevenue,
-    totalTourists,
-    cancelledTours,
-    pendingTours,
-    completedTours,
-    `==========`
-  );
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
@@ -99,7 +108,6 @@ export default function GuideDashboard() {
       description: "",
       price: "",
       startDate: "",
-      endDate: "",
       maxTourists: "",
       status: "pending",
       images: [],
@@ -114,12 +122,19 @@ export default function GuideDashboard() {
   const handleEdit = (tour) => {
     setIsEditing(true);
     setEditingTourId(tour._id || tour.id);
+
+    // Format the date for datetime-local input
+    let formattedStartDate = "";
+    if (tour.startDate) {
+      const date = new Date(tour.startDate);
+      formattedStartDate = date.toISOString().slice(0, 16);
+    }
+
     setNewTour({
       title: tour.title || "",
       description: tour.description || "",
       price: tour.price || "",
-      startDate: tour.startDate || "",
-      endDate: tour.endDate || "",
+      startDate: formattedStartDate,
       maxTourists: tour.maxTourists || "",
       status: tour.status || "pending",
       images: tour.images || [],
@@ -129,7 +144,11 @@ export default function GuideDashboard() {
 
   const handleUpdateTourSubmit = async () => {
     try {
-      await axios.put(`/tours/${editingTourId}`, newTour);
+      const tourData = {
+        ...newTour,
+        endDate: newTour.startDate, // Set endDate to same as startDate
+      };
+      await axios.put(`/tours/${editingTourId}`, tourData);
       toast.success("Tour updated successfully!");
       setOpen(false);
       setIsEditing(false);
@@ -139,14 +158,13 @@ export default function GuideDashboard() {
         description: "",
         price: "",
         startDate: "",
-        endDate: "",
         maxTourists: "",
         status: "pending",
         images: [],
       });
       // Refresh the tour list
       const toursRes = await axios.get("/tours/my-tours");
-      setMyTours(toursRes.data.data || []);
+      setMyTours(toursRes.data || []);
     } catch (err) {
       toast.error("Failed to update tour");
       console.error(err);
@@ -170,7 +188,11 @@ export default function GuideDashboard() {
 
   const handleAddTourSubmit = async () => {
     try {
-      await axios.post("/tours", newTour);
+      const tourData = {
+        ...newTour,
+        endDate: newTour.startDate, // Set endDate to same as startDate
+      };
+      await axios.post("/tours", tourData);
       toast.success("Tour added!");
       setOpen(false);
       setIsEditing(false);
@@ -180,14 +202,13 @@ export default function GuideDashboard() {
         description: "",
         price: "",
         startDate: "",
-        endDate: "",
         maxTourists: "",
         status: "pending",
         images: [],
       });
       // Refresh the tour list
       const toursRes = await axios.get("/tours/my-tours");
-      setMyTours(toursRes.data.data || []);
+      setMyTours(toursRes.data || []);
     } catch (err) {
       toast.error("Failed to add tour");
       console.error(err);
@@ -303,6 +324,12 @@ export default function GuideDashboard() {
                   <Typography variant="body2" color="text.secondary">
                     Status: {tour.status || "pending"}
                   </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Start:{" "}
+                    {tour.startDate
+                      ? new Date(tour.startDate).toLocaleString()
+                      : "Not set"}
+                  </Typography>
                   <Typography variant="subtitle1">
                     Price: ${tour.price}
                   </Typography>
@@ -375,17 +402,8 @@ export default function GuideDashboard() {
           <TextField
             label="Start Date"
             name="startDate"
-            type="date"
+            type="datetime-local"
             value={newTour.startDate}
-            onChange={handleChange}
-            InputLabelProps={{ shrink: true }}
-            fullWidth
-          />
-          <TextField
-            label="End Date"
-            name="endDate"
-            type="date"
-            value={newTour.endDate}
             onChange={handleChange}
             InputLabelProps={{ shrink: true }}
             fullWidth

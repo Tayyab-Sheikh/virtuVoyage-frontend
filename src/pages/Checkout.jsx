@@ -155,7 +155,7 @@ export default function Checkout() {
       };
 
       // Send to backend using the correct endpoint
-      await axios.post(`/tourist/enroll/${tour.id}`, enrollmentData);
+      await axios.post(`/tourist/enroll/${tour._id}`, enrollmentData);
 
       toast.success(
         "Tour enrollment successful! You will receive a confirmation email shortly."
@@ -237,8 +237,8 @@ export default function Checkout() {
 
                 <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                   <img
-                    src={tour.image}
-                    alt={tour.name}
+                    src={tour.images[0]}
+                    alt={tour.title}
                     style={{
                       width: 80,
                       height: 60,
@@ -249,10 +249,7 @@ export default function Checkout() {
                   />
                   <Box>
                     <Typography variant="subtitle1" fontWeight="bold">
-                      {tour.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {tour.place}
+                      {tour.title}
                     </Typography>
                   </Box>
                 </Box>
@@ -270,7 +267,7 @@ export default function Checkout() {
                     Total Amount:
                   </Typography>
                   <Typography variant="h5" fontWeight="bold" color="primary">
-                    {tour.price}
+                    ${tour.price}
                   </Typography>
                 </Box>
               </CardContent>
@@ -285,18 +282,6 @@ export default function Checkout() {
                   <PaymentIcon sx={{ mr: 1, verticalAlign: "middle" }} />
                   Payment Information
                 </Typography>
-
-                <Alert severity="info" sx={{ mb: 3 }}>
-                  <Typography variant="body2">
-                    <strong>Test Card Numbers:</strong>
-                    <br />
-                    Visa: 4111 1111 1111 1111
-                    <br />
-                    Mastercard: 5555 5555 5555 4444
-                    <br />
-                    Any future expiry date and 3-digit CVV
-                  </Typography>
-                </Alert>
 
                 <form onSubmit={handleSubmit}>
                   <Grid container spacing={3}>

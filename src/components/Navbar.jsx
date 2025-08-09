@@ -1,4 +1,5 @@
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
+import NotificationIcon from "./NotificationIcon";
 
 export default function Navbar({ title, userType, onLogout }) {
   const handleLogout = () => {
@@ -57,6 +58,11 @@ export default function Navbar({ title, userType, onLogout }) {
             {button.label}
           </Button>
         ))}
+
+        {/* Only show notification icon for tourist and guide */}
+        {(userType === "tourist" || userType === "guide") && (
+          <NotificationIcon userType={userType} />
+        )}
 
         <Button onClick={handleLogout} color="inherit">
           Logout
