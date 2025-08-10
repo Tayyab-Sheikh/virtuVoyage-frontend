@@ -345,6 +345,20 @@ export default function GuideDashboard() {
                   >
                     Delete
                   </Button>
+                  {tour.status === "pending" && tour.zoomJoinLink && (
+                    <Button
+                      size="small"
+                      variant="contained"
+                      color="primary"
+                      onClick={() => window.open(tour.zoomJoinLink, "_blank")}
+                      sx={{
+                        backgroundColor: "#4caf50",
+                        "&:hover": { backgroundColor: "#45a049" },
+                      }}
+                    >
+                      Start Tour
+                    </Button>
+                  )}
                 </CardActions>
               </Card>
             </Grid>

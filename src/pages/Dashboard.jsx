@@ -337,6 +337,15 @@ export default function Dashboard() {
                             size="small"
                             variant="contained"
                             fullWidth
+                            onClick={() => {
+                              if (tour.zoomJoinLink) {
+                                window.open(tour.zoomJoinLink, "_blank");
+                              } else {
+                                toast.info(
+                                  "Zoom link not available for this tour"
+                                );
+                              }
+                            }}
                             sx={{ backgroundColor: "#6a1b9a", mt: "auto" }}
                           >
                             Join Tour
