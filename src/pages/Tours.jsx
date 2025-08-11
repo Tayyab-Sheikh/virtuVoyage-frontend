@@ -22,8 +22,25 @@ export default function Tours() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [tours, setTours] = useState([]);
+  const [userType, setUserType] = useState(null);
 
   useEffect(() => {
+    // Check if user is logged in
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (token && user) {
+      try {
+        const userData = JSON.parse(user);
+        setUserType(userData.role);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+        setUserType(null);
+      }
+    } else {
+      setUserType(null);
+    }
+
     fetchTours();
   }, []);
 
@@ -40,6 +57,13 @@ export default function Tours() {
   };
 
   const handleEnrollNow = (tour) => {
+    // If user is not logged in, redirect to login
+    if (!userType) {
+      toast.info("Please login to enroll in tours");
+      navigate("/login");
+      return;
+    }
+
     navigate("/checkout", { state: { tour } });
   };
 
@@ -76,7 +100,7 @@ export default function Tours() {
         background: "radial-gradient(circle at top left, #e0f7fa, #ede7f6)",
       }}
     >
-      <Navbar title="Available Tours" userType="tourist" />
+      <Navbar title="Available Tours" userType={userType} />
 
       <Container sx={{ textAlign: "center", py: 6 }}>
         <motion.div
